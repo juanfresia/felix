@@ -702,9 +702,13 @@ func NewIntDataplaneDriver(config Config) *InternalDataplane {
 		}
 	}
 
-	routeTableV4 := routetable.New(interfaceRegexes, 4, false, config.NetlinkTimeout,
-		config.DeviceRouteSourceAddress, config.DeviceRouteProtocol, config.RemoveExternalRoutes, 0,
-		dp.loopSummarizer)
+	/*
+		routeTableV4 := routetable.New(interfaceRegexes, 4, false, config.NetlinkTimeout,
+			config.DeviceRouteSourceAddress, config.DeviceRouteProtocol, config.RemoveExternalRoutes, 0,
+			dp.loopSummarizer)
+	*/
+
+	routeTableV4 := &routetable.DummyTable{}
 
 	epManager := newEndpointManager(
 		rawTableV4,
