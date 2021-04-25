@@ -105,8 +105,6 @@ var (
 )
 
 func init() {
-	prometheus.MustRegister(countDataplaneSyncErrors)
-	prometheus.MustRegister(summaryApplyTime)
 	prometheus.MustRegister(countMessages)
 	prometheus.MustRegister(summaryBatchSize)
 	prometheus.MustRegister(summaryIfaceBatchSize)
@@ -125,6 +123,7 @@ type Config struct {
 
 	MaxIPSetSize int
 
+	RouteSyncEnabled               bool
 	IptablesBackend                string
 	IPSetsRefreshInterval          time.Duration
 	RouteRefreshInterval           time.Duration
@@ -702,13 +701,17 @@ func NewIntDataplaneDriver(config Config) *InternalDataplane {
 		}
 	}
 
-	/*
-		routeTableV4 := routetable.New(interfaceRegexes, 4, false, config.NetlinkTimeout,
+	var routeTableV4 routeTable
+	routeTableV4 = &routetable.DummyTable{}
+
+	if config.RouteSyncEnabled {
+		log.Warn("RouteSyncEnabled is true.")
+		routeTableV4 = routetable.New(interfaceRegexes, 4, false, config.NetlinkTimeout,
 			config.DeviceRouteSourceAddress, config.DeviceRouteProtocol, config.RemoveExternalRoutes, 0,
 			dp.loopSummarizer)
-	*/
-
-	routeTableV4 := &routetable.DummyTable{}
+	} else {
+		log.Warn("RouteSyncEnabled is false.")
+	}
 
 	epManager := newEndpointManager(
 		rawTableV4,
