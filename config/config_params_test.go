@@ -57,6 +57,7 @@ var _ = Describe("FelixConfig vs ConfigParams parity", func() {
 		"IPv4VXLANTunnelAddr",
 		"VXLANTunnelMACAddr",
 		"loadClientConfigFromEnvironment",
+    "RouteSyncEnabled",
 
 		"loadClientConfigFromEnvironment",
 		"useNodeResourceUpdates",
